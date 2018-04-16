@@ -26,4 +26,13 @@ def device_faster(self):
     print("Fahrzeug wird schneller...")
     self.conn.write(b'+')
 
+def get_last_x_position(self):
+    print("Letzte X-Position:")
+    self.conn.write(b'x')
+
+def get_last_z_position(self):
+    print("Letzte Z-Position")
+    self.conn.write(b'z')
+
+
 
