@@ -8,15 +8,15 @@ def __init__(self):
 
 def start(self):
     print("Starte Gondula #1...")
-    self.conn.write(b'S')
+    self.conn.write(b's')
 
 def stop(self):
     print("Stoppe Gondula #1...")
-    self.conn.write(b'H')
+    self.conn.write(b'h')
 
 def object_detected(self):
     print("Zielobjekt wurde erkannt...")
-    self.conn.write(b'D')
+    self.conn.write(b'd')
 
 def device_slower(self):
     print("Fahrzeug wird langsamer...")
@@ -26,13 +26,17 @@ def device_faster(self):
     print("Fahrzeug wird schneller...")
     self.conn.write(b'+')
 
-def get_last_x_position(self):
-    print("Letzte X-Position:")
+def getCords(self):
     self.conn.write(b'x')
-
-def get_last_z_position(self):
-    print("Letzte Z-Position")
+    line = self.conn.readline().decode()
+    x = int(line)
+    print(x)
+    time.sleep(0.1)
     self.conn.write(b'z')
+    line = self.conn.readline().decode()
+    z = int(line)
+    print(z)
 
-
+def close_port(self):
+    self.conn.write
 
