@@ -1,42 +1,45 @@
 import serial
 import time
 
-def __init__(self):
-    print("Öffne Kommunikation zu Freedom Board")
-    conn = serial.Serial('/dev/ttyACM0') # Port aktualisieren
-    print("Verbindung zu " + conn.name + " erfolgreich.")
+class FreedomCommunications:
 
-def start(self):
-    print("Starte Gondula #1...")
-    self.conn.write(b's')
+    def __init__(self):
+        print("Öffne Kommunikation zu Freedom Board")
+        conn = serial.Serial('/dev/ttyACM0') # Port aktualisieren
+        print("Verbindung zu " + conn.name + " erfolgreich.")
 
-def stop(self):
-    print("Stoppe Gondula #1...")
-    self.conn.write(b'h')
+    def start(self):
+        print("Starte Gondula #1...")
+        self.conn.write(b's')
 
-def object_detected(self):
-    print("Zielobjekt wurde erkannt...")
-    self.conn.write(b'd')
+    def stop(self):
+        print("Stoppe Gondula #1...")
+        self.conn.write(b'h')
 
-def device_slower(self):
-    print("Fahrzeug wird langsamer...")
-    self.conn.write(b'-')
+    def object_detected(self):
+        print("Zielobjekt wurde erkannt...")
+        self.conn.write(b'd')
 
-def device_faster(self):
-    print("Fahrzeug wird schneller...")
-    self.conn.write(b'+')
+    def device_slower(self):
+        print("Fahrzeug wird langsamer...")
+        self.conn.write(b'-')
 
-def getCords(self):
-    self.conn.write(b'x')
-    line = self.conn.readline().decode()
-    x = int(line)
-    print(x)
-    time.sleep(0.1)
-    self.conn.write(b'z')
-    line = self.conn.readline().decode()
-    z = int(line)
-    print(z)
+    def device_faster(self):
+        print("Fahrzeug wird schneller...")
+        self.conn.write(b'+')
 
-def close_port(self):
-    self.conn.write
+    def getCords(self):
+        self.conn.write(b'x')
+        line = self.conn.readline().decode()
+        print(int(line))
+        time.sleep(0.1)
+        self.conn.write(b'z')
+        line = self.conn.readline().decode()
+        z = int(line)
+        print(z)
 
+    def close_port(self):
+        self.conn.write
+
+if __name__ == '__main__':
+    FreedomCommunications()
