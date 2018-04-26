@@ -39,7 +39,7 @@ class FreedomCommunications:
         print(z)
 
     def close_port(self):
-        self.conn.write
+        self.conn.close()
 
 if __name__ == '__main__':
-    FreedomCommunications()
+    FreedomCommunications.__init__(FreedomCommunications)
