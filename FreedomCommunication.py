@@ -31,12 +31,12 @@ class FreedomCommunications:
     def getXCords(self):
         self.conn.write(b'x')
         line = self.conn.readline().decode()
-        print(int(line))
+        return(int(line))
 
     def getZCords(self):
         self.conn.write(b'z')
         line = self.conn.readline().decode()
-        print(int(line))
+        return(int(line))
 
     def getCords(self):
         self.getXCords()
