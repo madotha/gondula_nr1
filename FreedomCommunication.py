@@ -28,15 +28,20 @@ class FreedomCommunications:
         print("Fahrzeug wird schneller...")
         self.conn.write(b'+')
 
-    def getCords(self):
+    def getXCords(self):
         self.conn.write(b'x')
         line = self.conn.readline().decode()
         print(int(line))
-        time.sleep(0.1)
+
+    def getZCords(self):
         self.conn.write(b'z')
         line = self.conn.readline().decode()
-        z = int(line)
-        print(z)
+        print(int(line))
+
+    def getCords(self):
+        self.getXCords()
+        time.sleep(0.1)
+        self.getZCords()
 
     def close_port(self):
         self.conn.close()
