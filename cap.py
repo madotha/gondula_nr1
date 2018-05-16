@@ -1,97 +1,123 @@
-from cv2 import VideoCapture
+from __future__ import print_function
+from imutils.video import WebcamVideoStream
+from imutils.video import FileVideoStream
+from imutils.video import FPS
 
-import cv2
-import time
 import numpy as np
+import cv2
+import imutils
+import time
+
+IMAGESIZE_X = 640
+IMAGESIZE_Y =  480
+TARGETRANGE = 15
+TARGETOFFSET = 0
 
 
-class ImageProcessor:
-    detect_image = True
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FPS, 20)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, IMAGESIZE_X)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, IMAGESIZE_Y)
 
-    def start_detecting(self, target_found):
-        print("ImageProcessor_start_detecting")
+fps = FPS().start()
 
-        camera = VideoCapture()
-        # raw_capture = PiRGBArray(camera, size=(640, 480))
-        time.sleep(1)
 
-        for frame in camera:
-            if not self.detect_image:
-                break
-            image = frame.array
-            loop_time = time.time()
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            gray = cv2.blur(gray, (5, 5))
+def getCenter(contour):
+    moments = cv2.moments(contour)
+    center_x = int(moments["m10"] / moments["m00"])
+    center_y = int(moments["m01"] / moments["m00"])
+    return center_x, center_y
 
-            # detect edges in the image
-            edged = cv2.Canny(gray, 100, 200)
-
-            # find contours (i.e. the 'outlines') in the image
-            new_image, contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
-
-            centers = []
-            approximations = []
-            last_dimensions = []
-            matches = []
-            for contour in contours:
-                # approximate the contour
-                peri = cv2.arcLength(contour, True)
-                approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
-
-                # if the approximated contour has four points its a rectangle
-                if len(approx) == 4:
-                    (x, y, w, h) = cv2.boundingRect(approx)
-                    if h == 0:
-                        h = 0.01
-                    aspect_ratio = w / float(h)
-                    if 0.85 <= aspect_ratio <= 1.15:
-                        moments = cv2.moments(approx)
-                        m00 = moments['m00']
-                        if m00 == 0:
-                            m00 = 0.05
-                        cx = int(moments['m10'] / m00)
-                        cy = int(moments['m01'] / m00)
-                        is_duplicate = self.is_a_duplicate(last_dimensions, h, w)
-                        if not is_duplicate:
-                            temp = 0
-                            first_match = True
-                            for center in centers:
-                                distance = np.linalg.norm(np.array((cx, cy)) - center)
-                                if distance <= 10:
-                                    if first_match:
-                                        matches.clear()
-                                        matches.append(approximations[temp])
-                                        first_match = False
-                                    else:
-                                        print("ImageProcessor_target_detected")
-                                        target_found()
-                                        self.stop_detecting()
-                                temp += 1
-                            approximations.append(approx)
-                            last_dimensions.append((w, h))
-                            centers.append(np.array((cx, cy)))
-            # print("FPS: " + str(1 / (time.time() - loop_time)))
-            raw_capture.truncate(0)
-            raw_capture.seek(0)
-        raw_capture.truncate(0)
-        camera.close()
-        cv2.destroyAllWindows()
-
-    def stop_detecting(self):
-        print("ImageProcessor_stop_detecting")
-        self.detect_image = False
-
-    def is_a_duplicate(self, last_dimensions, height, width):
-        offset = 3
-        for lastDimension in last_dimensions:
-            if (lastDimension[0] + offset) >= width >= (lastDimension[0] - offset):
-                return True
-
-            if (lastDimension[1] + offset) >= height >= (lastDimension[1] - offset):
-                return True
+def checkX(x) -> bool:
+    upper = IMAGESIZE_X/2 + TARGETRANGE + TARGETOFFSET
+    lower = IMAGESIZE_X/2 - TARGETRANGE + TARGETOFFSET
+    if lower <= x <= upper:
+        return True
+    else:
         return False
 
 
-if __name__ == '__main__':
-    image_processor = ImageProcessor()
-image_processor.start_detecting(None)
+def find_target(centers_array):
+    for i, v in enumerate(centers_array[0:-2]):
+        center_matches = 0
+        for w in centers_array[i + 1:]:
+            diff = np.abs(v - w)
+            if diff[0] <= 10 and diff[1] <= 10:
+                center_matches += 1
+                if center_matches >= 2:
+                    return v[0], v[1]
+    return -1, -1
+
+
+while fps._numFrames < 300:
+    # Capture frame-by-frame
+    ret, image = cap.read()
+
+    # Image operations
+    operate = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    operate = cv2.GaussianBlur(operate, (3, 3), 0)
+    # operate = cv2.blur(operate, (3, 3))
+    _, operate = cv2.threshold(operate, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # find edges
+    # operate = cv2.Canny(operate, 150, 255)
+
+    # find contours
+    _, contours, _ = cv2.findContours(operate.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+
+    #sort the contours from largest to smallest and pick the largest
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:8]
+
+    center_array = []
+    square_array = []
+    for c in contours:
+
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+
+        # check contour if is a rectangle
+        if len(approx) == 4:
+            (x, y, w, h,) = cv2.boundingRect(approx)
+            if h >= 1 and w >= 1:
+                ratio = w / float(h)
+
+                # check if rectangle is a square
+                if 0.85 <= ratio <= 1.15:
+                    square_array.append(c)
+                    cX, cY = getCenter(c)
+                    center_array.append(np.array((cX, cY)))
+
+
+    cX, cY = find_target(center_array)
+
+    if not cX == -1:
+        cv2.drawMarker(image, (cX, cY), (0, 255, 0), cv2.MARKER_CROSS, 15, cv2.LINE_AA)
+        if checkX(cX):
+            cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN,15, cv2.LINE_AA)
+
+
+
+
+    cv2.drawContours(image, contours, -1, (255,0,0),2)
+    cv2.drawContours(image, square_array, -1, (0, 255, 0), 2)
+
+
+
+
+    # Display the resulting frame
+    # cv2.imshow('Stasi',image)
+    # cv2.imshow('oper',operate)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+    fps.update()
+
+# When everything done, release the capture
+fps.stop()
+print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
+
+cap.release()
+cv2.destroyAllWindows()
+
