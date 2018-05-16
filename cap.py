@@ -14,10 +14,10 @@ TARGETRANGE = 15
 TARGETOFFSET = 0
 
 
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FPS, 20)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, IMAGESIZE_X)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, IMAGESIZE_Y)
+vs = WebcamVideoStream(src=0).start()
+
+
+
 
 fps = FPS().start()
 
@@ -51,7 +51,7 @@ def find_target(centers_array):
 
 while fps._numFrames < 300:
     # Capture frame-by-frame
-    ret, image = cap.read()
+    image = vs.read()
 
     # Image operations
     operate = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -67,7 +67,7 @@ while fps._numFrames < 300:
 
 
     #sort the contours from largest to smallest and pick the largest
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:8]
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[2:9]
 
     center_array = []
     square_array = []
@@ -79,22 +79,25 @@ while fps._numFrames < 300:
         # check contour if is a rectangle
         if len(approx) == 4:
             (x, y, w, h,) = cv2.boundingRect(approx)
-            if h >= 1 and w >= 1:
-                ratio = w / float(h)
+            # if h >= 10 and w >= 10:
+            ratio = w / float(h)
 
-                # check if rectangle is a square
-                if 0.85 <= ratio <= 1.15:
-                    square_array.append(c)
-                    cX, cY = getCenter(c)
-                    center_array.append(np.array((cX, cY)))
+            # check if rectangle is a square
+            if 0.9 <= ratio <= 1.1:
+                square_array.append(c)
+                cX, cY = getCenter(c)
+                center_array.append(np.array((cX, cY)))
 
 
     cX, cY = find_target(center_array)
 
     if not cX == -1:
+        print("Target found at: " + str(cX) + "," + str(cY))
         cv2.drawMarker(image, (cX, cY), (0, 255, 0), cv2.MARKER_CROSS, 15, cv2.LINE_AA)
         if checkX(cX):
+            print("Drop location : " + str(cX) + ","+ str(cY))
             cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN,15, cv2.LINE_AA)
+            break
 
 
 
@@ -106,7 +109,7 @@ while fps._numFrames < 300:
 
 
     # Display the resulting frame
-    # cv2.imshow('Stasi',image)
+    cv2.imshow('Stasi',image)
     # cv2.imshow('oper',operate)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
@@ -115,9 +118,10 @@ while fps._numFrames < 300:
 
 # When everything done, release the capture
 fps.stop()
-print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
 print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-cap.release()
+
 cv2.destroyAllWindows()
+vs.stop()
 
