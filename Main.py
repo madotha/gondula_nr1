@@ -1,7 +1,8 @@
 import threading
-from FreedomCommunication import FreedomCommunications
-import cap
+import FreedomCommunication
+#import cap
 import time
+import GUI
 
 x = 45
 y = 0
@@ -9,12 +10,14 @@ y = 0
 
 def Main():
     global fc
-    fc = FreedomCommunications()
+    fc = FreedomCommunication
+    global gui
+    gui = GUI
 
 
 def readCords():
     while True:
-        fc = FreedomCommunications()
+        fc = FreedomCommunication
         global x
         x = fc.getXCords()
         time.sleep(1)
