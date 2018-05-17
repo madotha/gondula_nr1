@@ -16,7 +16,7 @@ CENTER_ACCURANCY = 10
 CENTER_MATCHES = 2
 
 
-def main():
+def start():
     vs = WebcamVideoStream(src=0).start()
     fps = FPS().start()
 
@@ -117,4 +117,4 @@ def find_target(centers_array):
 
 
 if __name__ == '__main__':
-    main()
+    start()

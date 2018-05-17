@@ -1,7 +1,5 @@
 from tkinter import *
-import FreedomCommunication as fc
-
-root = Tk()
+import Main
 
 def testGetXCords():
     return (69)
@@ -13,17 +11,34 @@ def testGetZCords():
 def testStart():
     print("Tadaaa!")
 
-root.title("Gondula #1 Lastposition")
+def counter_label(label, readFunction):
+    def count():
+        label.config(text=readFunction())
+        label.after(1000, count)
 
-xposLabel = Label(root, text="X-Position:", font="Helvetica 18 bold").pack()
-xpos_cords = Label(root, text=fc.getXCords(), font="Helvetica 18").pack()
-
-zposLabel = Label(root, text="Z-Position:", font="Helvetica 18 bold").pack()
-zpos_cords = Label(root, text=fc.getZCords(), font="Helvetica 18").pack()
-
-start_button = Button(root, text="Start", command=fc.start(), font="Helvetica 18").pack()
-
-quit_button = Button(root, text="Quit", command=root.quit, font="Helvetica 18").pack()
+    count()
 
 
-root.mainloop()
+def start(readFunction):
+    root = Tk()
+
+    root.title("Gondula #1 Lastposition")
+    xposLabel = Label(root, text="X-Position:", font="Helvetica 18 bold")
+    xposLabel.pack()
+    xpos_cords = Label(root, font="Helvetica 18")
+    xpos_cords.pack()
+    counter_label(xpos_cords, readFunction)
+    zposLabel = Label(root, text="Z-Position:", font="Helvetica 18 bold")
+    zposLabel.pack()
+    zpos_cords = Label(root, text=testGetZCords(), font="Helvetica 18")
+    zpos_cords.pack()
+    start_button = Button(root, text="Start", command=testStart, font="Helvetica 18")
+    start_button.pack()
+    quit_button = Button(root, text="Quit", command=root.quit, font="Helvetica 18")
+    quit_button.pack()
+
+    root.mainloop()
+
+
+
+

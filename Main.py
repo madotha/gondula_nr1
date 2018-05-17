@@ -1,29 +1,32 @@
-import threading
-import FreedomCommunication
-#import cap
-import time
+# import threading
+# import FreedomCommunication as fc
+# import cap
+# import time
 import GUI
 
-x = 45
-y = 0
+X_START = 45
+Z_START = 0
 
 
 def Main():
-    global fc
-    fc = FreedomCommunication
-    while True:
-        fc.getXCords()
-        fc.getZCords()
-    global gui
-    gui = GUI
+
+    # fc.init()
+    # cap.start()
+    GUI.start(readCords)
 
 
+
+
+test = 0
 def readCords():
-    while True:
-        fc = FreedomCommunication
-        global x
-        x = fc.getXCords()
-        time.sleep(1)
+    # x = fc.getXCords()
+    # if x > X_START:
+    #     return x
+    # return X_START
+    global test
+    test += 5
+    print(test)
+    return test
 
 
 if __name__ == "__main__":

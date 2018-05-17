@@ -2,7 +2,7 @@ import serial
 import time
 
 
-def main():
+def init():
     print("Öffne Kommunikation zu Freedom Board")
     global conn
     conn = serial.Serial('/dev/ttyACM0')  # Port aktualisieren
@@ -56,5 +56,5 @@ def getCords():
 def close_port():
     conn.close()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
