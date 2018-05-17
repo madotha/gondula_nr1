@@ -16,7 +16,7 @@ CENTER_ACCURANCY = 10
 CENTER_MATCHES = 2
 
 
-def start():
+def start(reachedtargetmethod):
     vs = WebcamVideoStream(src=0).start()
     fps = FPS().start()
 
@@ -66,6 +66,7 @@ def start():
             if checkX(cX):
                 print("Drop location : " + str(cX) + "," + str(cY))
                 # cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN, 15, cv2.LINE_AA)
+                reachedtargetmethod()
                 break
 
         # Draw the Contours

@@ -1,44 +1,61 @@
 from tkinter import *
-import Main
-
-def testGetXCords():
-    return (69)
 
 
-def testGetZCords():
-    return (77)
+def testCords():
+    return 42, 88
+
 
 def testStart():
     print("Tadaaa!")
 
-def counter_label(label, readFunction):
+
+def cord_loop(xlabel, zlabel, readFunction):
     def count():
-        label.config(text=readFunction())
-        label.after(1000, count)
+        x, z = readFunction()
+        xlabel.config(text=str(x))
+        zlabel.config(text=str(z))
+        xlabel.after(1000, count)
 
     count()
 
 
-def start(readFunction):
+def start(startmethod, cordsmethod):
+    # Create Windows
     root = Tk()
-
+    root.attributes("-fullscreen", True)
     root.title("Gondula #1 Lastposition")
-    xposLabel = Label(root, text="X-Position:", font="Helvetica 18 bold")
-    xposLabel.pack()
-    xpos_cords = Label(root, font="Helvetica 18")
-    xpos_cords.pack()
-    counter_label(xpos_cords, readFunction)
-    zposLabel = Label(root, text="Z-Position:", font="Helvetica 18 bold")
-    zposLabel.pack()
-    zpos_cords = Label(root, text=testGetZCords(), font="Helvetica 18")
+
+    # Prepare Frames for Labels
+    topframe = Frame(root)
+    topframe.pack(side=TOP)
+    middleframe = Frame(root)
+    middleframe.pack()
+    bottomframe = Frame(root)
+    bottomframe.pack(side=BOTTOM)
+
+    # Topframe Labels
+    xposLabel = Label(topframe, text="X-Position:", font="Helvetica 18 bold")
+    xposLabel.pack(side=LEFT)
+    xpos_cords = Label(topframe, font="Helvetica 18")
+    xpos_cords.pack(side=RIGHT)
+
+    # Middleframe Labels
+    zposLabel = Label(middleframe, text="Z-Position:", font="Helvetica 18 bold")
+    zposLabel.pack(side=LEFT)
+    zpos_cords = Label(middleframe, font="Helvetica 18")
     zpos_cords.pack()
-    start_button = Button(root, text="Start", command=testStart, font="Helvetica 18")
-    start_button.pack()
-    quit_button = Button(root, text="Quit", command=root.quit, font="Helvetica 18")
-    quit_button.pack()
+
+    # Bottomframe for Buttons
+    start_button = Button(bottomframe, text="Start", command=startmethod(), font="Helvetica 18")
+    start_button.pack(side=LEFT, padx=5, pady=5)
+    quit_button = Button(bottomframe, text="Quit", command=root.quit, font="Helvetica 18")
+    quit_button.pack(side=RIGHT, padx=5, pady=5)
+
+    # Updatemethod for Cords
+    cord_loop(xpos_cords, zpos_cords, cordsmethod)
 
     root.mainloop()
 
 
-
-
+if __name__ == '__main__':
+    start(testStart, testCords)
