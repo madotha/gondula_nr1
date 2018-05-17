@@ -11,6 +11,9 @@ y = 0
 def Main():
     global fc
     fc = FreedomCommunication
+    while True:
+        fc.getXCords()
+        fc.getZCords()
     global gui
     gui = GUI
 
