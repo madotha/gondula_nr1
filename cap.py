@@ -52,11 +52,11 @@ def main():
                 if h >= 10 and w >= 10:
                     ratio = w / float(h)
 
-                # check if rectangle is a square
-                if 0.9 <= ratio <= 1.1:
-                    square_array.append(c)
-                    cX, cY = getCenter(c)
-                    center_array.append(np.array((cX, cY)))
+                    # check if rectangle is a square
+                    if 0.9 <= ratio <= 1.1:
+                        square_array.append(c)
+                        cX, cY = getCenter(c)
+                        center_array.append(np.array((cX, cY)))
 
         cX, cY = find_target(center_array)
 
@@ -70,10 +70,10 @@ def main():
 
         # Draw the Contours
         # cv2.drawContours(image, contours, -1, (255, 0, 0), 2)
-        # cv2.drawContours(image, square_array, -1, (0, 255, 0), 2)
+        cv2.drawContours(image, square_array, -1, (0, 255, 0), 2)
 
         # Display the resulting frame
-        # cv2.imshow('Stasi', image)
+        cv2.imshow('Stasi', image)
         # cv2.imshow('oper',operate)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

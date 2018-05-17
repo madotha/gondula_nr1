@@ -2,54 +2,59 @@ import serial
 import time
 
 
-def __init__(self):
+def main():
     print("Öffne Kommunikation zu Freedom Board")
+    global conn
     conn = serial.Serial('/dev/ttyACM0')  # Port aktualisieren
     print("Verbindung zu " + conn.name + " erfolgreich.")
 
 
-def start(self):
+def start():
     print("Starte Gondula #1...")
-    self.conn.write(b's')
+    conn.write(b's')
 
 
-def stop(self):
+def stop():
     print("Stoppe Gondula #1...")
-    self.conn.write(b'h')
+    conn.write(b'h')
 
 
-def object_detected(self):
+def object_detected():
     print("Zielobjekt wurde erkannt...")
-    self.conn.write(b'd')
+    conn.write(b'd')
 
 
-def device_slower(self):
+def device_slower():
     print("Fahrzeug wird langsamer...")
-    self.conn.write(b'-')
+    conn.write(b'-')
 
 
-def device_faster(self):
+def device_faster():
     print("Fahrzeug wird schneller...")
-    self.conn.write(b'+')
+    conn.write(b'+')
 
 
-def getXCords(self):
-    self.conn.write(b'x')
-    lineX = self.conn.readline().decode()
+def getXCords():
+    conn.write(b'x')
+    lineX = conn.readline().decode()
     return (int(lineX))
 
 
-def getZCords(self):
-    self.conn.write(b'z')
-    lineZ = self.conn.readline().decode()
+def getZCords():
+    conn.write(b'z')
+    lineZ = conn.readline().decode()
     return (int(lineZ))
 
 
-def getCords(self):
-    self.getXCords()
+def getCords():
+    x = getXCords()
     time.sleep(0.1)
-    self.getZCords()
+    z = getZCords()
+    return x, z
 
 
-def close_port(self):
-    self.conn.close()
+def close_port():
+    conn.close()
+
+if __name__ == "__main__":
+    main()
