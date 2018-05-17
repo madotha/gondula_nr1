@@ -1,19 +1,24 @@
 import threading
-import FreedomCommunication
+from FreedomCommunication import FreedomCommunications
 import cap
+import time
 
-class Main:
+x = 45
+y = 0
 
-    freedom_communication = FreedomCommunication
-    cap = cap
 
-    def __init__(self):
-        print("Main init")
+def Main():
+    global fc
+    fc = FreedomCommunications()
 
-    def start(self):
-        print("Main_start")
-        self.freedom_communication.FreedomCommunications.__init__(FreedomCommunication)
-        self.cap.ImageProcessor.start_detecting(self, target_found)
+
+def readCords():
+    while True:
+        fc = FreedomCommunications()
+        global x
+        x = fc.getXCords()
+        time.sleep(1)
+
 
 if __name__ == "__main__":
     Main()
