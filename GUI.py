@@ -46,9 +46,9 @@ def start(startmethod, cordsmethod):
     zpos_cords.pack()
 
     # Bottomframe for Buttons
-    start_button = Button(bottomframe, text="Start", command=startmethod(), font="Helvetica 18")
+    start_button = Button(bottomframe, text="Start", command=startmethod, font="Helvetica 18")
     start_button.pack(side=LEFT, padx=5, pady=5)
-    quit_button = Button(bottomframe, text="Quit", command=root.quit, font="Helvetica 18")
+    quit_button = Button(bottomframe, text="Quit", command=root.destroy, font="Helvetica 18")
     quit_button.pack(side=RIGHT, padx=5, pady=5)
 
     # Updatemethod for Cords

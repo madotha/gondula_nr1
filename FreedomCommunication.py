@@ -2,7 +2,7 @@ import serial
 import time
 
 
-def init():
+def open():
     print("Öffne Kommunikation zu Freedom Board")
     global conn
     conn = serial.Serial('/dev/ttyACM0')  # Port aktualisieren
