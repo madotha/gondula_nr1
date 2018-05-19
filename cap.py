@@ -14,13 +14,16 @@ TARGETRANGE = 15
 TARGETOFFSET = 0
 CENTER_ACCURANCY = 10
 CENTER_MATCHES = 2
+run = False
 
 
 def start(reachedtargetmethod):
+    global run
+    run = True
     vs = WebcamVideoStream(src=0).start()
     fps = FPS().start()
 
-    while not vs.stopped:
+    while run:
         # Capture frame-by-frame
         image = vs.read()
 
@@ -87,6 +90,12 @@ def start(reachedtargetmethod):
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
     cv2.destroyAllWindows()
     vs.stop()
+    # vs.stream.release()
+
+
+def stop():
+    global run
+    run = False
 
 
 def getCenter(contour):
@@ -94,6 +103,7 @@ def getCenter(contour):
     center_x = int(moments["m10"] / moments["m00"])
     center_y = int(moments["m01"] / moments["m00"])
     return center_x, center_y
+
 
 # Check the x cords and return True if the position is reached.
 def checkX(x) -> bool:
@@ -103,6 +113,7 @@ def checkX(x) -> bool:
         return True
     else:
         return False
+
 
 # Looking for the Target. Check the Centers of the Squares and return the Cords, if there are enough Matches.
 def find_target(centers_array):
@@ -118,4 +129,8 @@ def find_target(centers_array):
 
 
 if __name__ == '__main__':
-    start()
+    def test():
+        print("Testrun Target found")
+
+
+    start(test)

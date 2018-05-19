@@ -37,13 +37,13 @@ def device_faster():
 def getXCords():
     conn.write(b'x')
     lineX = conn.readline().decode()
-    return (int(lineX))
+    return int(lineX)
 
 
 def getZCords():
     conn.write(b'z')
     lineZ = conn.readline().decode()
-    return (int(lineZ))
+    return int(lineZ)
 
 
 def getCords():

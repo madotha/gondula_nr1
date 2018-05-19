@@ -19,9 +19,10 @@ def cord_loop(xlabel, zlabel, readFunction):
     count()
 
 
-def start(startmethod, cordsmethod):
+def start(startmethod, stopmethod, cordsmethod):
     fonttext ="Helvetica 80"
     fontbutton = "Helvetica 36"
+    buttonsize = {'heigh': 2, 'width': 10}
 
     # Create Windows
     root = Tk()
@@ -37,21 +38,34 @@ def start(startmethod, cordsmethod):
     bottomframe.pack(side=BOTTOM)
 
     # Topframe Labels
-    xposLabel = Label(topframe, text="X-Position:", font=fonttext)
+    xposLabel = Label(topframe, text="X-Pos:", font=fonttext)
     xposLabel.pack(side=LEFT)
     xpos_cords = Label(topframe, font=fonttext)
     xpos_cords.pack(side=RIGHT)
 
     # Middleframe Labels
-    zposLabel = Label(middleframe, text="Z-Position:", font=fonttext)
+    zposLabel = Label(middleframe, text="Z-Pos:", font=fonttext)
     zposLabel.pack(side=LEFT)
     zpos_cords = Label(middleframe, font=fonttext)
     zpos_cords.pack()
 
+    # Commands for Buttons
+    def bstart():
+        startmethod()
+        start_button.config(text="Stop", command=bstop)
+
+    def bstop():
+        stopmethod()
+        start_button.config(text="Start", command=bstart)
+
+    def bquit():
+        stopmethod()
+        root.destroy()
+
     # Bottomframe for Buttons
-    start_button = Button(bottomframe, text="Start", command=startmethod, font=fontbutton, height=2, width=10)
+    start_button = Button(bottomframe, text="Start", command=bstart, font=fontbutton, **buttonsize)
     start_button.pack(side=LEFT, padx=5, pady=5)
-    quit_button = Button(bottomframe, text="Stop", command=root.destroy, font=fontbutton, height=2, width=10)
+    quit_button = Button(bottomframe, text="Exit", command=bquit, font=fontbutton, **buttonsize)
     quit_button.pack(side=RIGHT, padx=5, pady=5)
 
     # Updatemethod for Cords
@@ -61,4 +75,4 @@ def start(startmethod, cordsmethod):
 
 
 if __name__ == '__main__':
-    start(testStart, testCords)
+    start(testStart, testStart, testCords)

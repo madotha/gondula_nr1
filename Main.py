@@ -1,61 +1,73 @@
-import threading
+from threading import Thread
 import _thread
-import FreedomCommunication as fc
+# import FreedomCommunication as fc
+import fc_fake_test as fc
 import cap
 import time
 import GUI
 
 BLOCK_STARTPOS = 45
-x_pos = BLOCK_STARTPOS
-z_pos = 0
-targetnotfound = True
+block_x_pos = BLOCK_STARTPOS
+block_z_pos = 0
+target_reached = False
+running = False
 
 
-def Main():
+def main():
     # Open Serialinterface
     time.sleep(1)
     fc.open()
-    GUI.start(startGondula, getCords)
+    GUI.start(startmethod=start_gondula, stopmethod=stop_gondula, cordsmethod=get_cords)
 
 
-def startGondula():
+def start_gondula():
+    global running
+    running = True
     fc.start()
-    print("Start blabla")
-    readCordsFromSerial()
+    t = Thread(target=readCordsFromSerial, args=())
+    t.start()
 
 
+def stop_gondula():
+    global running
+    running = False
+    fc.stop()
+    cap.stop()
 
 
 def readCordsFromSerial():
-    print("read start")
-    global x_pos
-    global z_pos
+    print("Start readingloop x and z from mc")
+    global block_x_pos
+    global block_z_pos
     first_run = True
     x_compare = 0
-    while targetnotfound:
+    while not target_reached and running:
         # X Values are only send from the Controller, after it pick up the Block. Until this, he sends 0
         # So the first Value after 0 gets read and safe to compare the progress, after this position.
         x, z = fc.getCords()
         if x > 0:
             # Start PictureDetection by first
             if first_run:
-                x_compare, _ = x
-                _thread.start_new_thread(cap.start(targetreached))
+                x_compare = x
+                Thread(target=cap.start, args=(drop_block,)).start()
+                # _thread.start_new_thread(cap.start, (drop_block,))
                 first_run = False
             else:
-                x_pos = x_compare - x + BLOCK_STARTPOS
-                z_pos = z
+                block_x_pos = x_compare - x + BLOCK_STARTPOS
+                block_z_pos = z
         time.sleep(1)
 
-def targetreached():
+
+def drop_block():
     fc.object_detected()
-    global targetnotfound
-    targetnotfound = False
+    global target_reached
+    target_reached = True
 
 
-def getCords():
-    return x_pos, z_pos
+def get_cords():
+    return block_x_pos, block_z_pos
 
 
 if __name__ == "__main__":
-    Main()
+    main()
+

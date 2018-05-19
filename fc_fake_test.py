@@ -3,6 +3,7 @@ import time
 
 xfake = 100
 zfake = 100
+counter = 0
 
 def open():
     print("Öffne Kommunikation zu Freedom Board")
@@ -30,8 +31,13 @@ def device_faster():
 
 
 def getXCords():
+    global counter
+    if counter < 3:
+        counter+=1
+        return 0
     global xfake
     xfake-=1
+    print(xfake)
     return xfake
 
 
