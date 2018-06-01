@@ -11,7 +11,8 @@ import time
 IMAGESIZE_X = 640
 IMAGESIZE_Y = 480
 TARGETRANGE = 15
-TARGETOFFSET = 0
+TARGETOFFSET = 40
+TARGETTIMEOFFSET = 0
 CENTER_ACCURANCY = 10
 CENTER_MATCHES = 2
 run = False
@@ -31,7 +32,8 @@ def start(reachedtargetmethod):
         operate = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         operate = cv2.GaussianBlur(operate, (3, 3), 0)
         # operate = cv2.blur(operate, (3, 3))
-        _, operate = cv2.threshold(operate, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, operate = cv2.threshold(operate, 200, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        # operate = cv2.adaptiveThreshold(operate,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
 
         # find edges
         # operate = cv2.Canny(operate, 150, 255)
@@ -69,15 +71,16 @@ def start(reachedtargetmethod):
             if checkX(cX):
                 print("Drop location : " + str(cX) + "," + str(cY))
                 # cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN, 15, cv2.LINE_AA)
+                time.sleep(TARGETTIMEOFFSET)
                 reachedtargetmethod()
                 break
 
         # Draw the Contours
         # cv2.drawContours(image, contours, -1, (255, 0, 0), 2)
-        cv2.drawContours(image, square_array, -1, (0, 255, 0), 2)
+        # cv2.drawContours(image, square_array, -1, (0, 255, 0), 2)
 
         # Display the resulting frame
-        cv2.imshow('Stasi', image)
+        # cv2.imshow('Stasi', image)
         # cv2.imshow('oper',operate)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

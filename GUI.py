@@ -14,7 +14,7 @@ def cord_loop(xlabel, zlabel, readFunction):
         x, z = readFunction()
         xlabel.config(text=str(x))
         zlabel.config(text=str(z))
-        xlabel.after(500, count)
+        xlabel.after(200, count)
 
     count()
 
