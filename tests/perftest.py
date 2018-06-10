@@ -66,19 +66,22 @@ while vs.more():
     operate = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     operate = cv2.GaussianBlur(operate, (3, 3), 0)
     # operate = cv2.blur(operate, (3, 3))
-    _, operate = cv2.threshold(operate, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    # _, operate = cv2.threshold(operate, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # find edges
-    # operate = cv2.Canny(operate, 150, 255)
+    operate = cv2.Canny(operate, 150, 255)
     loopimage += time.time() - loopstart
 
     # find contours
+    loopstart = time.time()
     _, contours, _ = cv2.findContours(operate.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     loopcontours += time.time() -  loopstart
 
     #sort the contours from largest to smallest and pick the largest
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)[2:10]
+    loopstart = time.time()
 
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:9]
+    # print(len(contours))
     center_array = []
     square_array = []
     for c in contours:
@@ -102,9 +105,11 @@ while vs.more():
     cX, cY = find_target(center_array)
 
     if not cX == -1:
-        cv2.drawMarker(image, (cX, cY), (0, 255, 0), cv2.MARKER_CROSS, 15, cv2.LINE_AA)
+        # cv2.drawMarker(image, (cX, cY), (0, 255, 0), cv2.MARKER_CROSS, 15, cv2.LINE_AA)
+        print("Target found at"+str(cX))
         if checkX(cX):
-            cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN,15, cv2.LINE_AA)
+            print("Target Drop at" + str(cX))
+            # cv2.drawMarker(image, (cX, cY), (0, 0, 255), cv2.MARKER_TRIANGLE_DOWN,15, cv2.LINE_AA)
 
 
 
@@ -117,7 +122,7 @@ while vs.more():
 
     # Display the resulting frame
     # cv2.imshow('Stasi',image)
-    # cv2.imshow('oper',operate)
+    cv2.imshow('oper',operate)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

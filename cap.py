@@ -11,7 +11,7 @@ import time
 IMAGESIZE_X = 640
 IMAGESIZE_Y = 480
 TARGETRANGE = 15
-TARGETOFFSET = 40
+TARGETOFFSET = 20
 TARGETTIMEOFFSET = 0
 CENTER_ACCURANCY = 10
 CENTER_MATCHES = 2
@@ -42,7 +42,7 @@ def start(reachedtargetmethod):
         _, contours, _ = cv2.findContours(operate.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
         # sort the contours from largest to smallest and pick the largest
-        contours = sorted(contours, key=cv2.contourArea, reverse=True)[2:9]
+        contours = sorted(contours, key=cv2.contourArea, reverse=True)[:9]
 
         center_array = []
         square_array = []

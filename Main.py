@@ -56,9 +56,10 @@ def readCordsFromSerial():
             # else:
                 # block_x_pos = x_compare - x + BLOCK_STARTPOS
                 # block_z_pos = z
-            x_compare = 325 - x
+            x_compare = 333 - x
             if x_compare > 65:
                 block_x_pos = x_compare
+                block_z_pos = z
 
         time.sleep(0.25)
 
